@@ -1,5 +1,6 @@
 package com.example.cinnamon_cinema_backend.controllers;
 
+import com.example.cinnamon_cinema_backend.dtos.GenreDTO;
 import com.example.cinnamon_cinema_backend.entities.Genre;
 import com.example.cinnamon_cinema_backend.services.GenreService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,9 @@ public class GenreController {
     private final GenreService genreService;
 
     @GetMapping
-    public ResponseEntity<List<Genre>> getAllGenres() {
-        List<Genre> genres = genreService.getAllGenres();
-        return ResponseEntity.ok(genres);
+    public ResponseEntity<List<GenreDTO>> getAllGenres() {
+
+        return ResponseEntity.ok(genreService.getAllGenres());
     }
 
     @GetMapping("/{id}")
