@@ -1,7 +1,9 @@
 package com.example.cinnamon_cinema_backend.services.impl;
 
+import com.example.cinnamon_cinema_backend.dtos.RoleDTO;
 import com.example.cinnamon_cinema_backend.entities.Role;
 import com.example.cinnamon_cinema_backend.entities.User;
+import com.example.cinnamon_cinema_backend.mappers.RoleMapper;
 import com.example.cinnamon_cinema_backend.repositories.RoleRepo;
 import com.example.cinnamon_cinema_backend.repositories.UserRepo;
 import com.example.cinnamon_cinema_backend.services.RoleService;
@@ -17,6 +19,7 @@ import java.util.List;
 public class RoleServiceImp implements RoleService {
     private final RoleRepo roleRepo;
     private final UserRepo userRepo;
+    private final RoleMapper roleMapper;
 
     @Override
     public void assignRoleToUser(User user, Role role) {
@@ -38,59 +41,66 @@ public class RoleServiceImp implements RoleService {
     }
 
     @Override
-    public Role createRole(Role role) {
-        log.info("Creating new role: {}", role.getName());
+    public RoleDTO createRole(RoleDTO role) {
+        log.info("Creating role {}", role.getName());
         // Implement the logic to create a new role
         // For example, you can use a repository to save the role
-        roleRepo.save(role);
-        return role;
+        Role newRole = roleMapper.toEntity(role);
+        Role savedRole = roleRepo.save(newRole);
+        return roleMapper.toDTO(savedRole);
     }
 
     @Override
     public void deleteRole(Long roleId) {
-        log.info("Deleting role with id: {}", roleId);
-        // Implement the logic to delete a role
-        // For example, you can use a repository to delete the role by its ID
+        log.info("Deleting role with ID {}", roleId);
+        // Implement the logic to delete a role by its ID
+        // For example, you can use a repository to delete the role
         roleRepo.deleteById(roleId);
     }
 
     @Override
-    public List<Role> getAllRoles() {
+    public List<RoleDTO> getAllRoles() {
         log.info("Fetching all roles");
         // Implement the logic to fetch all roles
         // For example, you can use a repository to find all roles
-        return roleRepo.findAll();
+        List<Role> roles = roleRepo.findAll();
+        return roles.stream()
+                .map(roleMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Role getRoleById(Long id) {
-        log.info("Fetching role with id: {}", id);
+    public RoleDTO getRoleById(Long id) {
+        log.info("Fetching role with ID {}", id);
         // Implement the logic to fetch a role by its ID
-        // For example, you can use a repository to find the role by its ID
-        return roleRepo.findById(Long.valueOf(id)).orElse(null);
+        // For example, you can use a repository to find the role
+        Role role = roleRepo.findById(id).orElse(null);
+        return role != null ? roleMapper.toDTO(role) : null;
     }
 
     @Override
-    public Role updateRole(Long id, Role role) {
-        log.info("Updating role with id: {}", id);
-        // Implement the logic to update a role
-        // For example, you can use a repository to update the role
-        Role existingRole = getRoleById(id);
+    public RoleDTO updateRole(Long id, RoleDTO role) {
+        log.info("Updating role with ID {}", id);
+        // Implement the logic to update a role by its ID
+        // For example, you can use a repository to find the role and update its properties
+        Role existingRole = roleRepo.findById(id).orElse(null);
         if (existingRole != null) {
             existingRole.setName(role.getName());
-            roleRepo.save(existingRole);
+            Role updatedRole = roleRepo.save(existingRole);
+            return roleMapper.toDTO(updatedRole);
         }
-        return existingRole;
+        return null;
     }
 
     @Override
-    public Role GetRoleByUserId(Long userId) {
-        log.info("Fetching role for user with id: {}", userId);
+    public RoleDTO GetRoleByUserId(Long userId) {
+        log.info("Fetching role by user ID {}", userId);
         // Implement the logic to fetch a role by user ID
-        // For example, you can use a repository to find the role by user ID
+        // For example, you can use a repository to find the user and get their role
         User user = userRepo.findById(userId).orElse(null);
         if (user != null) {
-            return user.getRole();
+            Role role = user.getRole();
+            return role != null ? roleMapper.toDTO(role) : null;
         }
         return null;
     }

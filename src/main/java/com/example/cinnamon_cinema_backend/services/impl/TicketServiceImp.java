@@ -1,6 +1,8 @@
 package com.example.cinnamon_cinema_backend.services.impl;
 
+import com.example.cinnamon_cinema_backend.dtos.TicketDTO;
 import com.example.cinnamon_cinema_backend.entities.Ticket;
+import com.example.cinnamon_cinema_backend.mappers.TicketMapper;
 import com.example.cinnamon_cinema_backend.repositories.TicketRepo;
 import com.example.cinnamon_cinema_backend.repositories.TicketSeatRepo;
 import com.example.cinnamon_cinema_backend.services.TicketService;
@@ -16,49 +18,52 @@ import java.util.List;
 public class TicketServiceImp implements TicketService {
     private final TicketSeatRepo ticketSeatRepo;
     private final TicketRepo ticketRepo;
+    private final TicketMapper ticketMapper;
 
     @Override
-    public void createTicket(Ticket ticket) {
-        log.info("Creating ticket: {}", ticket);
-        // Implement the logic to save the ticket
-        // For example, you can use a repository to save the ticket
-        ticketRepo.save(ticket);
+    public void createTicket(TicketDTO ticket) {
+        Ticket ticketEntity = ticketMapper.toEntity(ticket);
+        ticketRepo.save(ticketEntity);
+        log.info("Ticket created: {}", ticket);
     }
 
     @Override
     public void cancelTicket(Long ticketId) {
-        log.info("Cancelling ticket with id: {}", ticketId);
-        // Implement the logic to cancel the ticket
-        // For example, you can use a repository to delete the ticket by its ID
-        // and update the seat availability
-        ticketSeatRepo.deleteById(ticketId);
-        ticketRepo.deleteById(ticketId);
+        Ticket ticket = ticketRepo.findById(ticketId).orElseThrow(() -> new RuntimeException("Ticket not found"));
+        ticketSeatRepo.deleteAllByTicket(ticket);
+        ticketRepo.delete(ticket);
+        log.info("Ticket cancelled: {}", ticketId);
     }
 
     @Override
-    public void updateTicket(Ticket ticket) {
-        log.info("Updating ticket: {}", ticket);
-
+    public void updateTicket(Long id, TicketDTO ticket) {
+        Ticket ticketEntity = ticketMapper.toEntity(ticket);
+        ticketEntity.setId(id);
+        ticketRepo.save(ticketEntity);
+        log.info("Ticket updated: {}", ticket);
     }
 
     @Override
-    public List<Ticket> getAllTickets() {
-        return List.of();
+    public List<TicketDTO> getAllTickets() {
+        log.info("Fetching all tickets");
+        return ticketRepo.findAll().stream()
+                .map(ticketMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Ticket getTicketById(Long ticketId) {
-        log.info("Fetching ticket with id: {}", ticketId);
-        // Implement the logic to fetch a ticket by its ID
-        // For example, you can use a repository to find the ticket by its ID
-        return ticketRepo.findById(ticketId).orElse(null);
+    public TicketDTO getTicketById(Long ticketId) {
+        Ticket ticket = ticketRepo.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        log.info("Ticket found: {}", ticket);
+        return ticketMapper.toDTO(ticket);
     }
 
     @Override
-    public List<Ticket> getTicketsByUserId(Long userId) {
-        log.info("Fetching tickets for user with id: {}", userId);
-        // Implement the logic to fetch tickets by user ID
-        // For example, you can use a repository to find tickets by user ID
-        return ticketRepo.findByUserId(userId);
+    public List<TicketDTO> getTicketsByUserId(Long userId) {
+        log.info("Fetching tickets for user with ID: {}", userId);
+        return ticketRepo.findByUserId(userId).stream()
+                .map(ticketMapper::toDTO)
+                .toList();
     }
 }

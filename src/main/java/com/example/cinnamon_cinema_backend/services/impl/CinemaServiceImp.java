@@ -1,6 +1,8 @@
 package com.example.cinnamon_cinema_backend.services.impl;
 
+import com.example.cinnamon_cinema_backend.dtos.CinemaDTO;
 import com.example.cinnamon_cinema_backend.entities.Cinema;
+import com.example.cinnamon_cinema_backend.mappers.CinemaMapper;
 import com.example.cinnamon_cinema_backend.repositories.CinemaRepo;
 import com.example.cinnamon_cinema_backend.services.CinemaService;
 import lombok.RequiredArgsConstructor;
@@ -8,37 +10,45 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CinemaServiceImp implements CinemaService {
     private final CinemaRepo cinemaRepo;
+    private final CinemaMapper cinemaMapper;
 
     @Override
-    public List<Cinema> getAllCinemas() {
+    public List<CinemaDTO> getAllCinemas() {
         log.info("Fetching all cinemas");
-        return cinemaRepo.findAll();
+        return cinemaRepo.findAll().stream()
+                .map(cinemaMapper::toDTO)
+                .collect(Collectors.toList());
     }
     @Override
-    public Cinema getCinemaById(Long id) {
+    public CinemaDTO getCinemaById(Long id) {
         log.info("Fetching cinema with id: {}", id);
-        return cinemaRepo.findById(id).orElse(null);
+        return cinemaRepo.findById(id).map(cinemaMapper::toDTO).orElse(null);
     }
     @Override
-    public Cinema addCinema(Cinema cinema) {
-        log.info("Creating new cinema: {}", cinema);
-        return cinemaRepo.save(cinema);
+    public CinemaDTO addCinema(CinemaDTO cinema) {
+        log.info("Adding new cinema: {}", cinema);
+        Cinema cinemaEntity = cinemaMapper.toEntity(cinema);
+        Cinema savedCinema = cinemaRepo.save(cinemaEntity);
+        return cinemaMapper.toDTO(savedCinema);
     }
     @Override
-    public Cinema updateCinema(Long id, Cinema cinema) {
+    public CinemaDTO updateCinema(Long id, CinemaDTO cinema) {
         log.info("Updating cinema with id: {}", id);
-        Cinema existingCinema = getCinemaById(id);
+        Cinema existingCinema = cinemaRepo.findById(id).orElse(null);
         if (existingCinema != null) {
             existingCinema.setName(cinema.getName());
             existingCinema.setAddress(cinema.getAddress());
-            return cinemaRepo.save(existingCinema);
+            Cinema updatedCinema = cinemaRepo.save(existingCinema);
+            return cinemaMapper.toDTO(updatedCinema);
         }
+
         return null;
     }
     @Override

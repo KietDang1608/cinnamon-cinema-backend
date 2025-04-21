@@ -11,9 +11,9 @@ public interface GenreService {
     // These methods will be implemented in the GenreServiceImpl class
 
 
-    Genre addGenre(Genre genre);
-    Genre updateGenre(Long genreId, Genre genreName);
+    GenreDTO addGenre(GenreDTO genre);
+    GenreDTO updateGenre(Long genreId, GenreDTO genreDTO);
     void deleteGenre(Long genreId);
     List<GenreDTO> getAllGenres();
-    Genre getGenreById(Long genreId);
+    GenreDTO getGenreById(Long genreId);
 }

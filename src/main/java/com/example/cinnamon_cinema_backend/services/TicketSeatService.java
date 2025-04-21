@@ -1,12 +1,13 @@
 package com.example.cinnamon_cinema_backend.services;
 
+import com.example.cinnamon_cinema_backend.dtos.TicketSeatDTO;
 import com.example.cinnamon_cinema_backend.entities.Ticket;
 import com.example.cinnamon_cinema_backend.entities.TicketSeat;
 
 import java.util.List;
 
 public interface TicketSeatService {
-    void bookTicket(TicketSeat ticketSeat);
+    void bookTicket(TicketSeatDTO ticketSeat);
 
     void cancelTicket(Long id);
 
@@ -15,9 +16,9 @@ public interface TicketSeatService {
     void getSeatDetails(Long seatId);
 //    void getAllSeatsInRoom(Long roomId);
 
-    List<TicketSeat> getAllTicketsSeat();
+    List<TicketSeatDTO> getAllTicketsSeat();
 
-    List<TicketSeat> getAllTicketsByTicketId(Long ticketId);
+    List<TicketSeatDTO> getAllTicketsByTicketId(Long ticketId);
 
-    TicketSeat addTicketSeat(TicketSeat ticketSeat);
+    TicketSeat addTicketSeat(TicketSeatDTO ticketSeat);
 }

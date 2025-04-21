@@ -1,19 +1,20 @@
 package com.example.cinnamon_cinema_backend.services;
 
+import com.example.cinnamon_cinema_backend.dtos.TicketDTO;
 import com.example.cinnamon_cinema_backend.entities.Ticket;
 
 import java.util.List;
 
 public interface TicketService {
-    void createTicket(Ticket ticket);
+    void createTicket(TicketDTO ticket);
 
     void cancelTicket(Long ticketId);
 
-    void updateTicket(Ticket ticket);
+    void updateTicket(Long id,TicketDTO ticket);
 
-    List<Ticket> getAllTickets();
+    List<TicketDTO> getAllTickets();
 
-    Ticket getTicketById(Long ticketId);
+    TicketDTO getTicketById(Long ticketId);
 
-    List<Ticket> getTicketsByUserId(Long userId);
+    List<TicketDTO> getTicketsByUserId(Long userId);
 }

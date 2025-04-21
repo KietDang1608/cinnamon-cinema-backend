@@ -1,6 +1,8 @@
 package com.example.cinnamon_cinema_backend.services.impl;
 
+import com.example.cinnamon_cinema_backend.dtos.SeatDTO;
 import com.example.cinnamon_cinema_backend.entities.Seat;
+import com.example.cinnamon_cinema_backend.mappers.SeatMapper;
 import com.example.cinnamon_cinema_backend.repositories.SeatRepo;
 import com.example.cinnamon_cinema_backend.services.SeatService;
 import lombok.RequiredArgsConstructor;
@@ -14,67 +16,64 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SeatServiceImp implements SeatService {
     private final SeatRepo seatRepo;
+    private final SeatMapper seatMapper;
 
     @Override
-    public Seat addSeat(Seat seat) {
-        log.info("Adding seat: {}", seat);
-        // Implement the logic to save the seat
-        // For example, you can use a repository to save the seat
-        seatRepo.save(seat);
-        return seat;
+    public SeatDTO addSeat(SeatDTO seat) {
+        log.info("Adding new seat: {}", seat);
+        Seat seatEntity = seatMapper.toEntity(seat);
+        Seat savedSeat = seatRepo.save(seatEntity);
+        return seatMapper.toDto(savedSeat);
     }
 
     @Override
-    public Seat updateSeat(Long id, Seat seat) {
+    public SeatDTO updateSeat(Long id, SeatDTO seat) {
+        log.info("Updating seat with ID: {}", id);
+        Seat seatEntity = seatRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Seat not found"));
 
-        log.info("Updating seat: {}", seat);
-        // Implement the logic to update the seat
-        // For example, you can use a repository to update the seat
-        Seat existingSeat = getSeatById(id);
-        if (existingSeat != null) {
-            existingSeat.setAvailable(seat.isAvailable());
-            seatRepo.save(existingSeat);
-        }
-        return existingSeat;
+        Seat updatedSeat = seatRepo.save(seatEntity);
+        return seatMapper.toDto(updatedSeat);
     }
 
     @Override
     public void deleteSeat(Long id) {
-        log.info("Deleting seat with id: {}", id);
-        // Implement the logic to delete the seat
-        // For example, you can use a repository to delete the seat by its ID
-        seatRepo.deleteById(id);
+        log.info("Deleting seat with ID: {}", id);
+        Seat seatEntity = seatRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Seat not found"));
+        seatRepo.delete(seatEntity);
+        log.info("Deleted seat with ID: {}", id);
     }
 
     @Override
-    public Seat getSeatById(Long id) {
-        log.info("Fetching seat with id: {}", id);
-        // Implement the logic to fetch a seat by its ID
-        // For example, you can use a repository to find the seat by its ID
-        return seatRepo.findById(id).orElse(null);
+    public SeatDTO getSeatById(Long id) {
+        log.info("Fetching seat with ID: {}", id);
+        return seatRepo.findById(id)
+                .map(seatMapper::toDto)
+                .orElseThrow(() -> new RuntimeException("Seat not found"));
     }
 
     @Override
-    public List<Seat> getAllSeats() {
+    public List<SeatDTO> getAllSeats() {
         log.info("Fetching all seats");
-        // Implement the logic to fetch all seats
-        // For example, you can use a repository to find all seats
-        return seatRepo.findAll();
+        return seatRepo.findAll().stream()
+                .map(seatMapper::toDto)
+                .toList();
     }
 
     @Override
-    public List<Seat> getSeatsByRoomId(Long roomId) {
-        log.info("Fetching all seats for room with id: {}", roomId);
-        // Implement the logic to fetch all seats for a specific room
-        // For example, you can use a repository to find all seats by room ID
-        return seatRepo.findAllByRoomId(roomId);
+    public List<SeatDTO> getSeatsByRoomId(Long roomId) {
+        log.info("Fetching seats for room with ID: {}", roomId);
+        return seatRepo.findByRoomId(roomId).stream()
+                .map(seatMapper::toDto)
+                .toList();
     }
 
     @Override
-    public List<Seat> getAvailableSeatsByRoomId(Long roomId) {
-        log.info("Fetching available seats for room with id: {}", roomId);
-        // Implement the logic to fetch all available seats for a specific room
-        // For example, you can use a repository to find all available seats by room ID
-        return seatRepo.findAllByRoomIdAndAvailable(roomId, true);
+    public List<SeatDTO> getAvailableSeatsByRoomId(Long roomId) {
+        log.info("Fetching available seats for room with ID: {}", roomId);
+        return seatRepo.findAvailableSeatsByRoomId(roomId).stream()
+                .map(seatMapper::toDto)
+                .toList();
     }
 }

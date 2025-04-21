@@ -1,5 +1,6 @@
 package com.example.cinnamon_cinema_backend.services;
 
+import com.example.cinnamon_cinema_backend.dtos.ShowtimeDTO;
 import com.example.cinnamon_cinema_backend.entities.Showtime;
 
 import java.util.List;
@@ -7,15 +8,15 @@ import java.util.List;
 public interface ShowtimeService {
     // Define the methods that will be implemented in the service class
     // For example:
-    Showtime createShowtime(Showtime showtime);
+    ShowtimeDTO createShowtime(ShowtimeDTO showtime);
 
-    Showtime getShowtimeById(Long id);
+    ShowtimeDTO getShowtimeById(Long id);
 
-    List<Showtime> getAllShowtimes();
+    List<ShowtimeDTO> getAllShowtimes();
 
-    Showtime updateShowtime(Long id, Showtime showtime);
+    ShowtimeDTO updateShowtime(Long id, ShowtimeDTO showtime);
 
     void deleteShowtime(Long id);
 
-    List<Showtime> getShowtimesByMovieId(Long movieId);
+    List<ShowtimeDTO> getShowtimesByMovieId(Long movieId);
 }

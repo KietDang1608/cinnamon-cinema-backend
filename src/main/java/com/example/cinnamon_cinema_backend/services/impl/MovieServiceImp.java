@@ -1,6 +1,8 @@
 package com.example.cinnamon_cinema_backend.services.impl;
 
+import com.example.cinnamon_cinema_backend.dtos.MovieDTO;
 import com.example.cinnamon_cinema_backend.entities.Movie;
+import com.example.cinnamon_cinema_backend.mappers.MovieMapper;
 import com.example.cinnamon_cinema_backend.repositories.MovieRepo;
 import com.example.cinnamon_cinema_backend.services.MovieService;
 import lombok.RequiredArgsConstructor;
@@ -14,52 +16,40 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovieServiceImp implements MovieService {
     private final MovieRepo movieRepo;
+    private final MovieMapper movieMapper;
 
     @Override
-    public void addMovie(Movie movie) {
-        log.info("Adding movie: {}", movie);
-        // Implement the logic to save the movie
-        // For example, you can use a repository to save the movie
-        movieRepo.save(movie);
+    public void addMovie(MovieDTO movie) {
+        Movie movieEntity = movieMapper.toEntity(movie);
+        movieRepo.save(movieEntity);
+        log.info("Movie added: {}", movie);
     }
 
     @Override
-    public void updateMovie(Movie movie) {
-        log.info("Updating movie: {}", movie);
-        // Implement the logic to update the movie
-        // For example, you can use a repository to update the movie
-        Movie existingMovie = getMovieById(movie.getId());
-        if (existingMovie != null) {
-            existingMovie.setTitle(movie.getTitle());
-            existingMovie.setDescription(movie.getDescription());
-            existingMovie.setReleaseDate(movie.getReleaseDate());
-            existingMovie.setDuration(movie.getDuration());
-            existingMovie.setGenres(movie.getGenres());
-            movieRepo.save(existingMovie);
-        }
+    public void updateMovie(Long id, MovieDTO movie) {
+        Movie movieEntity = movieMapper.toEntity(movie);
+        movieEntity.setId(id);
+        movieRepo.save(movieEntity);
+        log.info("Movie updated: {}", movie);
     }
 
     @Override
     public void deleteMovie(Long id) {
-        log.info("Deleting movie with id: {}", id);
-        // Implement the logic to delete the movie
-        // For example, you can use a repository to delete the movie by its ID
         movieRepo.deleteById(id);
+        log.info("Movie deleted with id: {}", id);
     }
 
     @Override
-    public Movie getMovieById(Long id) {
-        log.info("Fetching movie with id: {}", id);
-        // Implement the logic to fetch a movie by its ID
-        // For example, you can use a repository to find the movie by its ID
-        return movieRepo.findById(id).orElse(null);
+    public MovieDTO getMovieById(Long id) {
+        Movie movie = movieRepo.findById(id).orElseThrow(() -> new RuntimeException("Movie not found"));
+        log.info("Movie found: {}", movie);
+        return movieMapper.todDto(movie);
     }
 
     @Override
-    public List<Movie> getAllMovies() {
-        log.info("Fetching all movies");
-        // Implement the logic to fetch all movies
-        // For example, you can use a repository to find all movies
-        return movieRepo.findAll();
+    public List<MovieDTO> getAllMovies() {
+        List<Movie> movies = movieRepo.findAll();
+        log.info("All movies found: {}", movies);
+        return movies.stream().map(movieMapper::todDto).toList();
     }
 }

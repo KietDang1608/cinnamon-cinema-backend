@@ -28,31 +28,39 @@ public class GenreServiceImp implements GenreService {
                 .map(genreMapper::toDTO)
                 .collect((Collectors.toList()));
     }
+
     @Override
-    public Genre getGenreById(Long id) {
-        log.info("Fetching genre with id: {}", id);
-        return genreRepo.findById(id).orElse(null);
-    }
-    @Override
-    public Genre addGenre(Genre genre) {
-        log.info("Creating new genre: {}", genre);
-        return genreRepo.save(genre);
+    public GenreDTO addGenre(GenreDTO genre) {
+        log.info("Adding new genre: {}", genre.getName());
+        Genre genreEntity = genreMapper.toEntity(genre);
+        Genre savedGenre = genreRepo.save(genreEntity);
+        return genreMapper.toDTO(savedGenre);
     }
 
     @Override
-    public Genre updateGenre(Long genreId, Genre genre) {
-        log.info("Updating genre with id: {}", genreId);
-        Genre existingGenre = getGenreById(genreId);
-        if (existingGenre != null) {
-            existingGenre.setName(genre.getName());
-            genreRepo.save(existingGenre);
-        }
-        return existingGenre;
+    public GenreDTO updateGenre(Long genreId, GenreDTO genreDTO) {
+        log.info("Updating genre with ID: {}", genreId);
+        Genre genreEntity = genreRepo.findById(genreId)
+                .orElseThrow(() -> new RuntimeException("Genre not found"));
+        genreEntity.setName(genreDTO.getName());
+        Genre updatedGenre = genreRepo.save(genreEntity);
+        return genreMapper.toDTO(updatedGenre);
     }
+
     @Override
     public void deleteGenre(Long genreId) {
-        log.info("Deleting genre with id: {}", genreId);
-        genreRepo.deleteById(genreId);
+        log.info("Deleting genre with ID: {}", genreId);
+        Genre genreEntity = genreRepo.findById(genreId)
+                .orElseThrow(() -> new RuntimeException("Genre not found"));
+        genreRepo.delete(genreEntity);
+        log.info("Deleted genre with ID: {}", genreId);
     }
 
+    @Override
+    public GenreDTO getGenreById(Long genreId) {
+        log.info("Fetching genre with ID: {}", genreId);
+        Genre genreEntity = genreRepo.findById(genreId)
+                .orElseThrow(() -> new RuntimeException("Genre not found"));
+        return genreMapper.toDTO(genreEntity);
+    }
 }

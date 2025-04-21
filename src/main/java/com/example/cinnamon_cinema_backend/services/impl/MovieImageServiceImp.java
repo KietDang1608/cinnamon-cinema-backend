@@ -1,6 +1,8 @@
 package com.example.cinnamon_cinema_backend.services.impl;
 
+import com.example.cinnamon_cinema_backend.dtos.MovieImageDTO;
 import com.example.cinnamon_cinema_backend.entities.MovieImage;
+import com.example.cinnamon_cinema_backend.mappers.MovieImageMapper;
 import com.example.cinnamon_cinema_backend.repositories.MovieImageRepo;
 import com.example.cinnamon_cinema_backend.services.MovieImageService;
 import lombok.RequiredArgsConstructor;
@@ -14,44 +16,44 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovieImageServiceImp implements MovieImageService {
     private final MovieImageRepo movieImageRepository;
+    private final MovieImageMapper movieImageMapper;
 
     @Override
-    public void addMovieImage(MovieImage movieImage) {
-        log.info("Adding movie image: {}", movieImage);
-        // Implement the logic to save the movie image
-        // For example, you can use a repository to save the movie image
-        movieImageRepository.save(movieImage);
+    public void addMovieImage(MovieImageDTO movieImage) {
+        MovieImage movieImageEntity = movieImageMapper.toEntity(movieImage);
+        movieImageRepository.save(movieImageEntity);
+        log.info("Movie image added: {}", movieImage);
     }
 
     @Override
     public void deleteMovieImage(Long id) {
-        log.info("Deleting movie image with name: {}", id);
-        // Implement the logic to delete the movie image
-        // For example, you can use a repository to delete the movie image by its name
         movieImageRepository.deleteById(id);
+        log.info("Movie image deleted with id: {}", id);
     }
 
     @Override
-    public List<MovieImage> getAllMovieImages() {
-        log.info("Fetching all movie images");
-        // Implement the logic to fetch all movie images
-        // For example, you can use a repository to find all movie images
-        return movieImageRepository.findAll();
+    public List<MovieImageDTO> getAllMovieImages() {
+        List<MovieImage> movieImages = movieImageRepository.findAll();
+        log.info("Fetched all movie images");
+        return movieImages.stream()
+                .map(movieImageMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public MovieImage getMovieImageById(Long id) {
-        log.info("Fetching movie image with id: {}", id);
-        // Implement the logic to fetch a movie image by its ID
-        // For example, you can use a repository to find the movie image by its ID
-        return movieImageRepository.findById(id).orElse(null);
+    public MovieImageDTO getMovieImageById(Long id) {
+        MovieImage movieImage = movieImageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Movie image not found with id: " + id));
+        log.info("Fetched movie image with id: {}", id);
+        return movieImageMapper.toDTO(movieImage);
     }
 
     @Override
-    public List<MovieImage> getMovieImagesByMovieId(Long movieId) {
-        log.info("Fetching movie images for movie with id: {}", movieId);
-        // Implement the logic to fetch movie images by movie ID
-        // For example, you can use a repository to find movie images by movie ID
-        return movieImageRepository.findByMovieId(movieId);
+    public List<MovieImageDTO> getMovieImagesByMovieId(Long movieId) {
+        List<MovieImage> movieImages = movieImageRepository.findByMovieId(movieId);
+        log.info("Fetched movie images for movie id: {}", movieId);
+        return movieImages.stream()
+                .map(movieImageMapper::toDTO)
+                .toList();
     }
 }

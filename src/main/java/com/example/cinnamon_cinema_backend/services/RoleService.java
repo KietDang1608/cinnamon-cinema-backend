@@ -1,5 +1,6 @@
 package com.example.cinnamon_cinema_backend.services;
 
+import com.example.cinnamon_cinema_backend.dtos.RoleDTO;
 import com.example.cinnamon_cinema_backend.entities.Role;
 import com.example.cinnamon_cinema_backend.entities.User;
 
@@ -11,14 +12,14 @@ public interface RoleService {
 
     boolean userHasRole(User user, Role role);
 
-    Role createRole(Role role);
+    RoleDTO createRole(RoleDTO role);
 
     void deleteRole(Long roleId);
 
-    List<Role> getAllRoles();
+    List<RoleDTO> getAllRoles();
 
-    Role getRoleById(Long id);
-    Role updateRole(Long id, Role role);
+    RoleDTO getRoleById(Long id);
+    RoleDTO updateRole(Long id, RoleDTO role);
 
-    Role GetRoleByUserId(Long userId);
+    RoleDTO GetRoleByUserId(Long userId);
 }

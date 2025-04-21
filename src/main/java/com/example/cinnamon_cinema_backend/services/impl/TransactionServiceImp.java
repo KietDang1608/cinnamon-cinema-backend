@@ -1,7 +1,9 @@
 package com.example.cinnamon_cinema_backend.services.impl;
 
+import com.example.cinnamon_cinema_backend.dtos.TransactionDTO;
 import com.example.cinnamon_cinema_backend.entities.Transaction;
 import com.example.cinnamon_cinema_backend.entities.TransactionStatus;
+import com.example.cinnamon_cinema_backend.mappers.TransactionMapper;
 import com.example.cinnamon_cinema_backend.repositories.TransactionRepo;
 import com.example.cinnamon_cinema_backend.repositories.UserRepo;
 import com.example.cinnamon_cinema_backend.services.TransactionService;
@@ -16,79 +18,66 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionServiceImp implements TransactionService {
     private final TransactionRepo transactionRepo;
+    private final TransactionMapper transactionMapper;
 
     @Override
-    public Transaction processTransaction(Long transactionId) {
-        log.info("Processing transaction with ID: {}", transactionId);
-        // Implement the logic to process the transaction
-        // For example, you can use a repository to find the transaction by its ID and update its status
-        Transaction transaction = getTransactionById(transactionId);
-        if (transaction != null) {
-            transaction.setStatus(TransactionStatus.valueOf("Processed"));
-            transactionRepo.save(transaction);
-        } else {
-            log.warn("Transaction with ID: {} not found", transactionId);
-        }
+    public TransactionDTO processTransaction(Long transactionId) {
+        TransactionDTO transaction = transactionRepo.findById(transactionId)
+                .map(transactionMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+        transaction.setStatus(TransactionStatus.SUCCESS.name());
+        transactionRepo.save(transactionMapper.toEntity(transaction));
+        log.info("Transaction processed: {}", transaction);
         return transaction;
     }
 
     @Override
     public void cancelTransaction(Long transactionId) {
-        log.info("Cancelling transaction with ID: {}", transactionId);
-        // Implement the logic to cancel the transaction
-        // For example, you can use a repository to find the transaction by its ID and update its status
-        Transaction transaction = getTransactionById(transactionId);
-        if (transaction != null) {
-            transaction.setStatus(TransactionStatus.valueOf("Cancelled"));
-            transactionRepo.save(transaction);
-        } else {
-            log.warn("Transaction with ID: {} not found", transactionId);
-        }
+        TransactionDTO transaction = transactionRepo.findById(transactionId)
+                .map(transactionMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+        transaction.setStatus(TransactionStatus.FAILED.name());
+        transactionRepo.save(transactionMapper.toEntity(transaction));
+        log.info("Transaction processed: {}", transaction);
+
     }
 
     @Override
     public void refundTransaction(Long transactionId) {
-        log.info("Refunding transaction with ID: {}", transactionId);
-        // Implement the logic to refund the transaction
-        // For example, you can use a repository to find the transaction by its ID and update its status
-        Transaction transaction = getTransactionById(transactionId);
-        if (transaction != null) {
-            transaction.setStatus(TransactionStatus.valueOf("Refunded"));
-            transactionRepo.save(transaction);
-        } else {
-            log.warn("Transaction with ID: {} not found", transactionId);
-        }
+
     }
 
     @Override
-    public List<Transaction> getAllTransactions() {
+    public List<TransactionDTO> getAllTransactions() {
         log.info("Fetching all transactions");
-        // Implement the logic to fetch all transactions
-        // For example, you can use a repository to find all transactions
-        return transactionRepo.findAll();
+        return transactionRepo.findAll().stream()
+                .map(transactionMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Transaction getTransactionById(Long transactionId) {
-        log.info("Fetching transaction with ID: {}", transactionId);
-        // Implement the logic to fetch a transaction by its ID
-        // For example, you can use a repository to find the transaction by its ID
-        return transactionRepo.findById(transactionId).orElse(null);
+    public TransactionDTO getTransactionById(Long transactionId) {
+        TransactionDTO transaction = transactionRepo.findById(transactionId)
+                .map(transactionMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+        log.info("Transaction found: {}", transaction);
+        return transaction;
     }
 
     @Override
-    public List<Transaction> getTransactionsByUserId(Long userId) {
+    public List<TransactionDTO> getTransactionsByUserId(Long userId) {
         log.info("Fetching transactions for user with ID: {}", userId);
-        // Implement the logic to fetch transactions by user ID
-        // For example, you can use a repository to find transactions by user ID
-        return transactionRepo.findByUserId(userId);
+        return transactionRepo.findByUserId(userId).stream()
+                .map(transactionMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Transaction createTransaction(Transaction transaction) {
+    public TransactionDTO createTransaction(TransactionDTO transaction) {
         log.info("Creating new transaction: {}", transaction);
-        // Implement the logic to create a new transaction
-        // For example, you can use a repository to save the transaction
-        return transactionRepo.save(transaction);
+        Transaction transactionEntity = transactionMapper.toEntity(transaction);
+        Transaction savedTransaction = transactionRepo.save(transactionEntity);
+        return transactionMapper.toDTO(savedTransaction);
+        
     }
 }

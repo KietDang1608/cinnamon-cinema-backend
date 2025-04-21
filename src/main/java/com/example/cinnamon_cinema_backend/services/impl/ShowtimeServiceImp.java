@@ -1,6 +1,10 @@
 package com.example.cinnamon_cinema_backend.services.impl;
 
+import com.example.cinnamon_cinema_backend.dtos.ShowtimeDTO;
 import com.example.cinnamon_cinema_backend.entities.Showtime;
+import com.example.cinnamon_cinema_backend.mappers.ShowtimeMapper;
+import com.example.cinnamon_cinema_backend.repositories.MovieRepo;
+import com.example.cinnamon_cinema_backend.repositories.RoomRepo;
 import com.example.cinnamon_cinema_backend.repositories.ShowtimeRepo;
 import com.example.cinnamon_cinema_backend.services.ShowtimeService;
 import lombok.RequiredArgsConstructor;
@@ -14,61 +18,63 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ShowtimeServiceImp implements ShowtimeService {
     private final ShowtimeRepo showtimeRepo;
+    private final MovieRepo movieRepo;
+    private final RoomRepo roomRepo;
+    private final ShowtimeMapper showtimeMapper;
 
     @Override
-    public Showtime createShowtime(Showtime showtime) {
+    public ShowtimeDTO createShowtime(ShowtimeDTO showtime) {
         log.info("Creating new showtime: {}", showtime);
-        // Implement the logic to save the showtime
-        // For example, you can use a repository to save the showtime
-        showtimeRepo.save(showtime);
-        return showtime;
+        Showtime showtimeEntity = showtimeMapper.toEntity(showtime);
+        Showtime savedShowtime = showtimeRepo.save(showtimeEntity);
+        return showtimeMapper.toDTO(savedShowtime);
     }
 
     @Override
-    public Showtime getShowtimeById(Long id) {
+    public ShowtimeDTO getShowtimeById(Long id) {
         log.info("Fetching showtime with id: {}", id);
-        // Implement the logic to fetch a showtime by its ID
-        // For example, you can use a repository to find the showtime by its ID
-        return showtimeRepo.findById(id).orElse(null);
+        return showtimeRepo.findById(id)
+                .map(showtimeMapper::toDTO)
+                .orElse(null);
     }
 
     @Override
-    public List<Showtime> getAllShowtimes() {
+    public List<ShowtimeDTO> getAllShowtimes() {
         log.info("Fetching all showtimes");
-        // Implement the logic to fetch all showtimes
-        // For example, you can use a repository to find all showtimes
-        return showtimeRepo.findAll();
+        return showtimeRepo.findAll().stream()
+                .map(showtimeMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Showtime updateShowtime(Long id, Showtime showtime) {
+    public ShowtimeDTO updateShowtime(Long id, ShowtimeDTO showtime) {
         log.info("Updating showtime with id: {}", id);
-        // Implement the logic to update the showtime
-        // For example, you can use a repository to find the showtime by its ID and update it
-        Showtime existingShowtime = getShowtimeById(id);
-        if (existingShowtime != null) {
-            existingShowtime.setMovie(showtime.getMovie());
-            existingShowtime.setRoom(showtime.getRoom());
-            existingShowtime.setStartTime(showtime.getStartTime());
-            existingShowtime.setEndTime(showtime.getEndTime());
-            showtimeRepo.save(existingShowtime);
-        }
-        return existingShowtime;
+        Showtime existingShowtime = showtimeRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Showtime not found"));
+        existingShowtime.setStartTime(showtime.getStartTime());
+        existingShowtime.setMovie( movieRepo.findById(showtime.getMovieId())
+                .orElseThrow(() -> new RuntimeException("Movie not found")));
+        existingShowtime.setEndTime(showtime.getEndTime());
+        existingShowtime.setRoom( roomRepo.findById(showtime.getRoomId())
+                .orElseThrow(() -> new RuntimeException("Room not found")));
+        Showtime updatedShowtime = showtimeRepo.save(existingShowtime);
+        return showtimeMapper.toDTO(updatedShowtime);
     }
 
     @Override
     public void deleteShowtime(Long id) {
         log.info("Deleting showtime with id: {}", id);
-        // Implement the logic to delete the showtime
-        // For example, you can use a repository to delete the showtime by its ID
-        showtimeRepo.deleteById(id);
+        Showtime showtime = showtimeRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Showtime not found"));
+        showtimeRepo.delete(showtime);
+        log.info("Deleted showtime with id: {}", id);
     }
 
     @Override
-    public List<Showtime> getShowtimesByMovieId(Long movieId) {
+    public List<ShowtimeDTO> getShowtimesByMovieId(Long movieId) {
         log.info("Fetching showtimes for movie with id: {}", movieId);
-        // Implement the logic to fetch showtimes by movie ID
-        // For example, you can use a repository to find showtimes by movie ID
-        return showtimeRepo.findByMovieId(movieId);
+        return showtimeRepo.findByMovieId(movieId).stream()
+                .map(showtimeMapper::toDTO)
+                .toList();
     }
 }

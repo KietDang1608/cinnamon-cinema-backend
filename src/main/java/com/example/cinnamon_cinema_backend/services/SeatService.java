@@ -1,16 +1,17 @@
 package com.example.cinnamon_cinema_backend.services;
 
+import com.example.cinnamon_cinema_backend.dtos.SeatDTO;
 import com.example.cinnamon_cinema_backend.entities.Seat;
 
 import java.util.List;
 
 public interface SeatService {
     // Define the methods that will be implemented in the service class
-    Seat addSeat(Seat seat);
-    Seat updateSeat(Long id,Seat seat);
+    SeatDTO addSeat(SeatDTO seat);
+    SeatDTO updateSeat(Long id,SeatDTO seat);
     void deleteSeat(Long id);
-    Seat getSeatById(Long id);
-    List<Seat> getAllSeats();
-    List<Seat> getSeatsByRoomId(Long roomId);
-    List<Seat> getAvailableSeatsByRoomId(Long roomId);
+    SeatDTO getSeatById(Long id);
+    List<SeatDTO> getAllSeats();
+    List<SeatDTO> getSeatsByRoomId(Long roomId);
+    List<SeatDTO> getAvailableSeatsByRoomId(Long roomId);
 }
