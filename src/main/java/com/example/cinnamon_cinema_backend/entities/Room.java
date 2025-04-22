@@ -18,7 +18,7 @@ public class Room {
     private String name;
 
     @OneToMany(mappedBy = "room")
-    private Set<Seat> seats;
+    private Set<SeatDTO> seatDTOS;
 
     @ManyToOne
     @JoinColumn(name = "cinema_id")

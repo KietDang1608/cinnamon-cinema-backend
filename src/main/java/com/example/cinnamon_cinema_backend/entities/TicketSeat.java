@@ -18,7 +18,7 @@ public class TicketSeat {
 
     @ManyToOne
     @JoinColumn(name = "seat_id")
-    private Seat seat;
+    private SeatDTO seatDTO;
 
     private int price;
 

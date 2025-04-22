@@ -75,13 +75,11 @@ public class UserServiceImp  implements UserService {
     }
 
     @Override
-    public UserDTO updateUser(Long id, User user) {
-        log.info("Updating user with ID: {}", id);
-        User existingUser = userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        existingUser.setUsername(user.getUsername());
-        existingUser.setPassword(user.getPassword());
-        User updatedUser = userRepo.save(existingUser);
-        return userMapper.toDTO(updatedUser);
+    public UserDTO updateUser(Long id, UserDTO user) {
+        User userEntity = userMapper.toEntity(user);
+        userEntity.setId(id);
+        userRepo.save(userEntity);
+        log.info("User updated: {}", user.getUsername());
+        return user;
     }
 }

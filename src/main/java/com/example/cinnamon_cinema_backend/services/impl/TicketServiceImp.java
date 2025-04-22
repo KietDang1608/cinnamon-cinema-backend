@@ -21,10 +21,11 @@ public class TicketServiceImp implements TicketService {
     private final TicketMapper ticketMapper;
 
     @Override
-    public void createTicket(TicketDTO ticket) {
+    public TicketDTO createTicket(TicketDTO ticket) {
         Ticket ticketEntity = ticketMapper.toEntity(ticket);
         ticketRepo.save(ticketEntity);
         log.info("Ticket created: {}", ticket);
+        return ticket;
     }
 
     @Override
@@ -36,11 +37,12 @@ public class TicketServiceImp implements TicketService {
     }
 
     @Override
-    public void updateTicket(Long id, TicketDTO ticket) {
+    public TicketDTO updateTicket(Long id, TicketDTO ticket) {
         Ticket ticketEntity = ticketMapper.toEntity(ticket);
         ticketEntity.setId(id);
         ticketRepo.save(ticketEntity);
         log.info("Ticket updated: {}", ticket);
+        return ticket;
     }
 
     @Override

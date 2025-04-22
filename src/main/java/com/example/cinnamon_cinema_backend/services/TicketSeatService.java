@@ -20,5 +20,5 @@ public interface TicketSeatService {
 
     List<TicketSeatDTO> getAllTicketsByTicketId(Long ticketId);
 
-    TicketSeat addTicketSeat(TicketSeatDTO ticketSeat);
+    TicketSeatDTO addTicketSeat(TicketSeatDTO ticketSeat);
 }

@@ -17,6 +17,6 @@ public interface UserService {
 
     UserDTO getUserByUsername(String username);
 
-    UserDTO updateUser(Long id, User user);
+    UserDTO updateUser(Long id, UserDTO user);
     // Add more methods as needed for user-related operations
 }

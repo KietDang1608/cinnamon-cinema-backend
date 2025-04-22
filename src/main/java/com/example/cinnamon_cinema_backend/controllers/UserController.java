@@ -1,5 +1,6 @@
 package com.example.cinnamon_cinema_backend.controllers;
 
+import com.example.cinnamon_cinema_backend.dtos.UserDTO;
 import com.example.cinnamon_cinema_backend.entities.User;
 import com.example.cinnamon_cinema_backend.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +16,13 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        UserDTO user = userService.getUserById(id);
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
@@ -29,8 +30,8 @@ public class UserController {
         }
     }
     @GetMapping("/username/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        User user = userService.getUserByUsername(username);
+    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
+        UserDTO user = userService.getUserByUsername(username);
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
@@ -38,13 +39,13 @@ public class UserController {
         }
     }
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody User user) {
-        User createdUser = userService.registerUser(user.getUsername(), user.getPassword());
+    public ResponseEntity<UserDTO> addUser(@RequestBody UserDTO user) {
+        UserDTO createdUser = userService.registerUser(user.getUsername(), user.getPassword());
         return ResponseEntity.status(201).body(createdUser);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        User updatedUser = userService.updateUser(id, user);
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO user) {
+        UserDTO updatedUser = userService.updateUser(id, user);
         if (updatedUser != null) {
             return ResponseEntity.ok(updatedUser);
         } else {

@@ -23,22 +23,22 @@ public class GenreController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Genre> getGenreById(@PathVariable Long id) {
-        Genre genre = genreService.getGenreById(id);
-        if (genre != null) {
-            return ResponseEntity.ok(genre);
+    public ResponseEntity<GenreDTO> getGenreById(@PathVariable Long id) {
+        GenreDTO genreDTO = genreService.getGenreById(id);
+        if (genreDTO != null) {
+            return ResponseEntity.ok(genreDTO);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
     @PostMapping
-    public ResponseEntity<Genre> addGenre(@RequestBody Genre genre) {
-        Genre createdGenre = genreService.addGenre(genre);
+    public ResponseEntity<GenreDTO> addGenre(@RequestBody GenreDTO genre) {
+        GenreDTO createdGenre = genreService.addGenre(genre);
         return ResponseEntity.status(201).body(createdGenre);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Genre> updateGenre(@PathVariable Long id, @RequestBody Genre genre) {
-        Genre updatedGenre = genreService.updateGenre(id, genre);
+    public ResponseEntity<GenreDTO> updateGenre(@PathVariable Long id, @RequestBody GenreDTO genre) {
+        GenreDTO updatedGenre = genreService.updateGenre(id, genre);
         if (updatedGenre != null) {
             return ResponseEntity.ok(updatedGenre);
         } else {

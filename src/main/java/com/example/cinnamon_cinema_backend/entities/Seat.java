@@ -1,5 +1,7 @@
-package com.example.cinnamon_cinema_backend.entities;
+package com.example.cinnamon_cinema_backend.dtos;
 
+import com.example.cinnamon_cinema_backend.entities.Room;
+import com.example.cinnamon_cinema_backend.entities.TicketSeat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,5 +1,6 @@
 package com.example.cinnamon_cinema_backend.controllers;
 
+import com.example.cinnamon_cinema_backend.dtos.ShowtimeDTO;
 import com.example.cinnamon_cinema_backend.entities.Showtime;
 import com.example.cinnamon_cinema_backend.services.ShowtimeService;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +16,13 @@ public class ShowtimeController {
     private final ShowtimeService showtimeService;
 
     @GetMapping
-    public ResponseEntity<List<Showtime>> getAllShowtimes() {
-        List<Showtime> showtimes = showtimeService.getAllShowtimes();
+    public ResponseEntity<List<ShowtimeDTO>> getAllShowtimes() {
+        List<ShowtimeDTO> showtimes = showtimeService.getAllShowtimes();
         return ResponseEntity.ok(showtimes);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Showtime> getShowtimeById(@PathVariable Long id) {
-        Showtime showtime = showtimeService.getShowtimeById(id);
+    public ResponseEntity<ShowtimeDTO> getShowtimeById(@PathVariable Long id) {
+        ShowtimeDTO showtime = showtimeService.getShowtimeById(id);
         if (showtime != null) {
             return ResponseEntity.ok(showtime);
         } else {
@@ -29,18 +30,18 @@ public class ShowtimeController {
         }
     }
     @GetMapping("/movie/{movieId}")
-    public ResponseEntity<List<Showtime>> getShowtimesByMovieId(@PathVariable Long movieId) {
-        List<Showtime> showtimes = showtimeService.getShowtimesByMovieId(movieId);
+    public ResponseEntity<List<ShowtimeDTO>> getShowtimesByMovieId(@PathVariable Long movieId) {
+        List<ShowtimeDTO> showtimes = showtimeService.getShowtimesByMovieId(movieId);
         return ResponseEntity.ok(showtimes);
     }
     @PostMapping
-    public ResponseEntity<Showtime> addShowtime(@RequestBody Showtime showtime) {
-        Showtime createdShowtime = showtimeService.createShowtime(showtime);
+    public ResponseEntity<ShowtimeDTO> addShowtime(@RequestBody ShowtimeDTO showtime) {
+        ShowtimeDTO createdShowtime = showtimeService.createShowtime(showtime);
         return ResponseEntity.status(201).body(createdShowtime);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Showtime> updateShowtime(@PathVariable Long id, @RequestBody Showtime showtime) {
-        Showtime updatedShowtime = showtimeService.updateShowtime(id, showtime);
+    public ResponseEntity<ShowtimeDTO> updateShowtime(@PathVariable Long id, @RequestBody ShowtimeDTO showtime) {
+        ShowtimeDTO updatedShowtime = showtimeService.updateShowtime(id, showtime);
         if (updatedShowtime != null) {
             return ResponseEntity.ok(updatedShowtime);
         } else {

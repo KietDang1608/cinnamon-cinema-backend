@@ -1,5 +1,6 @@
 package com.example.cinnamon_cinema_backend.controllers;
 
+import com.example.cinnamon_cinema_backend.dtos.TransactionDTO;
 import com.example.cinnamon_cinema_backend.entities.Transaction;
 import com.example.cinnamon_cinema_backend.services.TransactionService;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +16,14 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @GetMapping
-    public ResponseEntity<List<Transaction>> getAllTransactions() {
-        List<Transaction> transactions = transactionService.getAllTransactions();
+    public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
+        List<TransactionDTO> transactions = transactionService.getAllTransactions();
         return ResponseEntity.ok(transactions);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Transaction> getTransactionById(@PathVariable Long id) {
-        Transaction transaction = transactionService.getTransactionById(id);
+    public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable Long id) {
+        TransactionDTO transaction = transactionService.getTransactionById(id);
         if (transaction != null) {
             return ResponseEntity.ok(transaction);
         } else {
@@ -30,18 +31,18 @@ public class TransactionController {
         }
     }
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Transaction>> getTransactionsByUserId(@PathVariable Long userId) {
-        List<Transaction> transactions = transactionService.getTransactionsByUserId(userId);
+    public ResponseEntity<List<TransactionDTO>> getTransactionsByUserId(@PathVariable Long userId) {
+        List<TransactionDTO> transactions = transactionService.getTransactionsByUserId(userId);
         return ResponseEntity.ok(transactions);
     }
     @PostMapping
-    public ResponseEntity<Transaction> addTransaction(@RequestBody Transaction transaction) {
-        Transaction createdTransaction = transactionService.createTransaction(transaction);
+    public ResponseEntity<TransactionDTO> addTransaction(@RequestBody TransactionDTO transaction) {
+        TransactionDTO createdTransaction = transactionService.createTransaction(transaction);
         return ResponseEntity.status(201).body(createdTransaction);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Transaction> processTransaction(@PathVariable Long id) {
-        Transaction updatedTransaction = transactionService.processTransaction(id);
+    public ResponseEntity<TransactionDTO> processTransaction(@PathVariable Long id) {
+        TransactionDTO updatedTransaction = transactionService.processTransaction(id);
         if (updatedTransaction != null) {
             return ResponseEntity.ok(updatedTransaction);
         } else {

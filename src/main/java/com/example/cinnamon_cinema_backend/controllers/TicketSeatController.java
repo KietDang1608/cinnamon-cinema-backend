@@ -1,5 +1,6 @@
 package com.example.cinnamon_cinema_backend.controllers;
 
+import com.example.cinnamon_cinema_backend.dtos.TicketSeatDTO;
 import com.example.cinnamon_cinema_backend.entities.TicketSeat;
 import com.example.cinnamon_cinema_backend.services.TicketSeatService;
 import lombok.RequiredArgsConstructor;
@@ -15,20 +16,20 @@ public class TicketSeatController {
     private final TicketSeatService ticketSeatService;
 
     @GetMapping
-    public ResponseEntity<List<TicketSeat>> getAllTicketSeats() {
-        List<TicketSeat> ticketSeats = ticketSeatService.getAllTicketsSeat();
+    public ResponseEntity<List<TicketSeatDTO>> getAllTicketSeats() {
+        List<TicketSeatDTO> ticketSeats = ticketSeatService.getAllTicketsSeat();
         return ResponseEntity.ok(ticketSeats);
     }
 
     @GetMapping("/ticket/{ticketId}")
-    public ResponseEntity<List<TicketSeat>> getTicketSeatsByTicketId(@PathVariable Long ticketId) {
-        List<TicketSeat> ticketSeats = ticketSeatService.getAllTicketsByTicketId(ticketId);
+    public ResponseEntity<List<TicketSeatDTO>> getTicketSeatsByTicketId(@PathVariable Long ticketId) {
+        List<TicketSeatDTO> ticketSeats = ticketSeatService.getAllTicketsByTicketId(ticketId);
         return ResponseEntity.ok(ticketSeats);
     }
 
     @PostMapping
-    public ResponseEntity<TicketSeat> addTicketSeat(@RequestBody TicketSeat ticketSeat) {
-        TicketSeat createdTicketSeat = ticketSeatService.addTicketSeat(ticketSeat);
+    public ResponseEntity<TicketSeatDTO> addTicketSeat(@RequestBody TicketSeatDTO ticketSeat) {
+        TicketSeatDTO createdTicketSeat = ticketSeatService.addTicketSeat(ticketSeat);
         return ResponseEntity.status(201).body(createdTicketSeat);
     }
 

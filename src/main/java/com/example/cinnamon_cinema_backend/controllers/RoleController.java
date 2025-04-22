@@ -1,5 +1,6 @@
 package com.example.cinnamon_cinema_backend.controllers;
 
+import com.example.cinnamon_cinema_backend.dtos.RoleDTO;
 import com.example.cinnamon_cinema_backend.entities.Role;
 import com.example.cinnamon_cinema_backend.services.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +16,14 @@ public class RoleController {
     private final RoleService roleService;
 
     @GetMapping
-    public ResponseEntity<List<Role>> getAllRoles() {
-        List<Role> roles = roleService.getAllRoles();
+    public ResponseEntity<List<RoleDTO>> getAllRoles() {
+        List<RoleDTO> roles = roleService.getAllRoles();
         return ResponseEntity.ok(roles);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Role> getRoleById(@PathVariable Long id) {
-        Role role = roleService.getRoleById(id);
+    public ResponseEntity<RoleDTO> getRoleById(@PathVariable Long id) {
+        RoleDTO role = roleService.getRoleById(id);
         if (role != null) {
             return ResponseEntity.ok(role);
         } else {
@@ -30,14 +31,14 @@ public class RoleController {
         }
     }
     @PostMapping
-    public ResponseEntity<Role> addRole(@RequestBody Role role) {
-        Role createdRole = roleService.createRole(role);
+    public ResponseEntity<RoleDTO> addRole(@RequestBody RoleDTO role) {
+        RoleDTO createdRole = roleService.createRole(role);
         return ResponseEntity.status(201).body(createdRole);
     }
 
     @PutMapping ( "/{id}")
-    public ResponseEntity<Role> updateRole(@PathVariable Long id, @RequestBody Role role) {
-        Role updatedRole = roleService.updateRole(id, role);
+    public ResponseEntity<RoleDTO> updateRole(@PathVariable Long id, @RequestBody RoleDTO role) {
+        RoleDTO updatedRole = roleService.updateRole(id, role);
         if (updatedRole != null) {
             return ResponseEntity.ok(updatedRole);
         } else {
@@ -51,8 +52,8 @@ public class RoleController {
         return ResponseEntity.noContent().build();
     }
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Role> getRolesByUserId(@PathVariable Long userId) {
-        Role role = roleService.GetRoleByUserId(userId);
+    public ResponseEntity<RoleDTO> getRolesByUserId(@PathVariable Long userId) {
+        RoleDTO role = roleService.GetRoleByUserId(userId);
         return ResponseEntity.ok(role);
     }
 

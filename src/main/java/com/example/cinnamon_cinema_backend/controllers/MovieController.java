@@ -1,5 +1,6 @@
 package com.example.cinnamon_cinema_backend.controllers;
 
+import com.example.cinnamon_cinema_backend.dtos.MovieDTO;
 import com.example.cinnamon_cinema_backend.entities.Movie;
 import com.example.cinnamon_cinema_backend.services.MovieService;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +16,14 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping
-    public ResponseEntity<List<Movie>> getAllMovies() {
-        List<Movie> movies = movieService.getAllMovies();
+    public ResponseEntity<List<MovieDTO>> getAllMovies() {
+        List<MovieDTO> movies = movieService.getAllMovies();
         return ResponseEntity.ok(movies);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Movie> getMovieById(@PathVariable Long id) {
-        Movie movie = movieService.getMovieById(id);
+    public ResponseEntity<MovieDTO> getMovieById(@PathVariable Long id) {
+        MovieDTO movie = movieService.getMovieById(id);
         if (movie != null) {
             return ResponseEntity.ok(movie);
         } else {
@@ -31,15 +32,15 @@ public class MovieController {
     }
 
     @PostMapping
-    public ResponseEntity<Movie> addMovie(@RequestBody Movie movie) {
+    public ResponseEntity<MovieDTO> addMovie(@RequestBody MovieDTO movie) {
         movieService.addMovie(movie);
         return ResponseEntity.status(201).body(movie);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Movie> updateMovie(@PathVariable Long id, @RequestBody Movie movie) {
+    public ResponseEntity<MovieDTO> updateMovie(@PathVariable Long id, @RequestBody MovieDTO movie) {
         movie.setId(id);
-        movieService.updateMovie(movie);
+        movieService.updateMovie(id,movie);
         return ResponseEntity.ok(movie);
     }
     @DeleteMapping("/{id}")
