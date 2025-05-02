@@ -28,8 +28,7 @@ public class Movie {
 
     private String releaseDate;
 
-    @OneToMany(mappedBy = "movie")
-    private Set<MovieImage> images;
+    private String imageUrl;
     
     @OneToMany(mappedBy = "movie")
     private Set<Showtime> showtimes;

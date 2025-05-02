@@ -1,5 +1,7 @@
 package com.example.cinnamon_cinema_backend.entities;
 
+import com.example.cinnamon_cinema_backend.dtos.Seat;
+import com.example.cinnamon_cinema_backend.dtos.SeatDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +20,7 @@ public class TicketSeat {
 
     @ManyToOne
     @JoinColumn(name = "seat_id")
-    private SeatDTO seatDTO;
+    private Seat seat;
 
     private int price;
 
